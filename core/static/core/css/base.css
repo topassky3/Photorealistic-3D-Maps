@@ -1,0 +1,164 @@
+/* Fuente personalizada */
+body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+}
+
+/* Estilo de la barra de navegación */
+.navbar {
+    background-color: #212529; /* Color oscuro elegante */
+    padding: 0.8rem 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    color: #ffffff !important;
+}
+
+.navbar-brand img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.nav-link {
+    color: #ffffff !important;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: #17a2b8 !important; /* Cambia el color al pasar el ratón */
+}
+
+/* Línea subrayada al pasar el ratón */
+.nav-item {
+    position: relative;
+}
+
+.nav-item::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: #17a2b8;
+    transition: width 0.3s ease-in-out;
+}
+
+.nav-item:hover::after {
+    width: 100%;
+}
+
+/* Estilo del menú desplegable */
+.dropdown-menu {
+    background-color: #343a40;
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.dropdown-item {
+    color: #ffffff !important;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+
+/* Íconos en el menú de usuario */
+.dropdown-item i {
+    margin-right: 8px;
+}
+
+/* Navbar fija al top */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+    .nav-link {
+        font-size: 0.95rem;
+    }
+}
+
+/* Estilo del Footer */
+footer {
+    background-color: #212529;
+    color: #ffffff;
+    padding: 40px 0;
+    margin-top: auto;
+}
+
+footer a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #17a2b8;
+    text-decoration: none;
+}
+
+.footer-title {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.social-icons a {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    color: #ffffff;
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #17a2b8;
+}
+
+.footer-divider {
+    border-top: 1px solid #495057;
+    margin: 20px 0;
+}
+
+.profile-header img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 30px;
+    border: 3px solid #17a2b8;
+}
+
+.profile-header .profile-info h2 {
+    margin-bottom: 10px;
+    color: #343a40;
+}
+
+.profile-header .profile-info p {
+    margin-bottom: 5px;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+}
+
+.profile-header .profile-info p i {
+    margin-right: 8px;
+    color: #17a2b8;
+}
+

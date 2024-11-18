@@ -1,0 +1,51 @@
+/* login/static/login/css/login.css */
+
+/* Remover estilos globales del body para evitar conflictos con core/base.html */
+body {
+    /* Fuente personalizada */
+    /* font-family: 'Roboto', sans-serif; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* min-height: 100vh; */
+    background-color: #f8f9fa;
+}
+
+/* Limitar el ancho del formulario de login y centrarlo */
+.login-section {
+    max-width: 400px; /* Ancho máximo del formulario */
+    margin: 80px auto 40px auto; /* Márgenes superior e inferior y auto para centrar horizontalmente */
+    padding: 40px; /* Espaciado interno */
+    background-color: #ffffff; /* Fondo blanco para el formulario */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para dar profundidad */
+}
+
+/* Estilo del título del formulario */
+.login-section h2 {
+    margin-bottom: 30px; /* Espacio debajo del título */
+    color: #343a40; /* Color del texto */
+    text-align: center; /* Centrar el título */
+}
+
+/* Estilos para los enlaces de registro */
+.register-link {
+    text-align: center; /* Centrar el texto */
+    margin-top: 15px; /* Espacio superior */
+}
+
+.register-link a {
+    color: #17a2b8; /* Color del enlace */
+    text-decoration: none; /* Sin subrayado */
+}
+
+.register-link a:hover {
+    text-decoration: underline; /* Subrayado al pasar el ratón */
+}
+
+@media (max-width: 576px) {
+    .login-section {
+        margin: 60px 20px 20px 20px; /* Ajuste de márgenes para pantallas pequeñas */
+        padding: 20px; /* Reducir el padding en dispositivos móviles */
+    }
+}
+
