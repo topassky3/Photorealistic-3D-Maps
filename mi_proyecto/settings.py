@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-34gzeapl#t^jy-m%1wcf$k$g760^sj(1yg7&3_jl(&a+39@+@o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.0.102"]
+ALLOWED_HOSTS = ["192.168.0.102", "192.168.0.103"]
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'login',
     'registor',
+    'administrador',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'home'  # Redirige a 'home' después de iniciar sesión
 LOGOUT_REDIRECT_URL = 'login:login'  # Redirige a la página de login después de cerrar sesión
 LOGIN_URL = 'login:login'  # URL de inicio de sesión por defecto
+
+AUTH_USER_MODEL = 'core.Anunciate'
