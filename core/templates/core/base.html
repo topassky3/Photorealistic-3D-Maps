@@ -1,4 +1,5 @@
 {% load static %}
+{% load grupos %}  <!-- Carga los filtros personalizados -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -15,13 +16,12 @@
     <link href="{% static 'core/css/base.css' %}" rel="stylesheet">
     {% block extra_head %}
     {% endblock %}
-
 </head>
 <body>
     <!-- Barra de Navegación -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.html">
+            <a class="navbar-brand" href="{% url 'home' %}">
                 <img
                     src="{% static 'core/img/logo-256.webp' %}"
                     srcset="
@@ -43,30 +43,43 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Mapas</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="marketing_strategy.html">Estrategia de Marketing</a>
+                        <a class="nav-link" href="#">Mapas</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Contacto</a>
                     </li>
+                    <!-- Enlace Exclusivo para Administradores de Anuncios -->
+                    {% if user.is_authenticated and user|has_group:"Administrador de Anuncios" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fa-solid fa-plus me-1"></i> Publicar Anuncio
+                            </a>
+                        </li>
+                        <!-- Puedes añadir más enlaces exclusivos aquí -->
+                    {% endif %}
                 </ul>
                 <div class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
-                        <i class="fa-solid fa-user me-2"></i> Usuario
+                        <i class="fa-solid fa-user me-2"></i>
+                        {% if user.is_authenticated %}
+                            {{ user.username }}
+                        {% else %}
+                            Usuario
+                        {% endif %}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <!-- Enlaces para usuarios no autenticados -->
-                        <li><a class="dropdown-item" href="{% url 'login:login' %}"><i class="fa-solid fa-sign-in-alt"></i> Iniciar Sesión</a></li>
-                        <li><a class="dropdown-item" href="register.html"><i class="fa-solid fa-user-plus"></i> Registrarse</a></li>
+                        {% if not user.is_authenticated %}
+                            <li><a class="dropdown-item" href="{% url 'login:login' %}"><i class="fa-solid fa-sign-in-alt me-2"></i> Iniciar Sesión</a></li>
+                            <li><a class="dropdown-item" href="{% url 'registor:register' %}"><i class="fa-solid fa-user-plus me-2"></i> Registrarse</a></li>
+                        {% else %}
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-id-badge me-2"></i> Perfil</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear me-2"></i> Configuración</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'login:logout' %}"><i class="fa-solid fa-sign-out-alt me-2"></i> Cerrar sesión</a></li>
+                        {% endif %}
                         <li><hr class="dropdown-divider"></li>
-                        <!-- Enlaces para usuarios autenticados (esto debe manejarse dinámicamente con backend) -->
-                        <li><a class="dropdown-item" href="profile.html"><i class="fa-solid fa-id-badge"></i> Perfil</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i> Configuración</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-sign-out-alt"></i> Cerrar sesión</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa-solid fa-question-circle me-2"></i> Ayuda</a></li>
                     </ul>
                 </div>
             </div>
@@ -91,7 +104,7 @@
     {% endblock %}
 
     <!-- Footer -->
-    <footer>
+    <footer class="bg-dark text-white py-4">
         <div class="container">
             <div class="row">
                 <!-- Sobre Nosotros -->
@@ -103,10 +116,10 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="footer-title">Enlaces Rápidos</h5>
                     <ul class="list-unstyled">
-                        <li><a href="index.html">Inicio</a></li>
-                        <li><a href="services.html">Servicios</a></li>
-                        <li><a href="projects.html">Proyectos</a></li>
-                        <li><a href="contact.html">Contacto</a></li>
+                        <li><a href="{% url 'home' %}" class="text-white">Inicio</a></li>
+                        <li><a href="#" class="text-white">Servicios</a></li>
+                        <li><a href="#" class="text-white">Proyectos</a></li>
+                        <li><a href="#" class="text-white">Contacto</a></li>
                     </ul>
                 </div>
                 <!-- Contacto -->
@@ -122,17 +135,17 @@
                 <div class="col-md-3 mb-4">
                     <h5 class="footer-title">Síguenos</h5>
                     <div class="social-icons">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Facebook" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn" class="text-white"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
             </div>
             <hr class="footer-divider">
             <div class="row">
                 <div class="col-12 text-center">
-                    <p>&copy; 2024 Mi Empresa. Todos los derechos reservados.</p>
+                    <p class="mb-0">&copy; 2024 Mi Empresa. Todos los derechos reservados.</p>
                 </div>
             </div>
         </div>

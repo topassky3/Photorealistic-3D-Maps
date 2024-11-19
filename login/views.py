@@ -1,5 +1,3 @@
-# login/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -14,7 +12,7 @@ def login_view(request):
         remember = request.POST.get('remember')
 
         try:
-            user = authenticate(request, username=email, password=password)
+            user = authenticate(request, username=email, password=password)  # Ahora 'username' es 'email'
             if user is not None:
                 login(request, user)
                 if not remember:
@@ -30,3 +28,4 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login:login')  # Redirige a la página de login después de cerrar sesión
+
