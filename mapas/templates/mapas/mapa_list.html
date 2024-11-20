@@ -1,0 +1,157 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Mapa de Anuncios 3D</h2>
+    <div id="map" style="height: 600px; width: 100%; position: relative;">
+        <!-- Marcadores de anuncios -->
+        {% for anuncio in anuncios %}
+            {% if anuncio.latitud and anuncio.longitud and anuncio.modelo_3d_url %}
+                <gmp-model-3d
+                    position="{{ anuncio.latitud }},{{ anuncio.longitud }},0"
+                    scale="20,20,20"
+                    src="{{ MEDIA_URL }}{{ anuncio.modelo_3d_url }}"
+                    altitude-mode="clamp-to-ground"
+                ></gmp-model-3d>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal para el Mapa 3D Detallado -->
+<div class="modal fade" id="detailedMapModal" tabindex="-1" aria-labelledby="detailedMapModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailedMapModalLabel">Mapa 3D Detallado</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div id="detailed-map" style="height: 80vh; width: 100%; position: relative;"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cargar Google Maps API con biblioteca de 3D -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places,maps3d&v=alpha"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+    // Inicializar el mapa principal
+    function initMainMap() {
+        var initialLocation = { lat: 37.7749, lng: -122.4194 }; // Coordenadas por defecto
+        {% if centro %}
+            initialLocation = { lat: {{ centro.lat }}, lng: {{ centro.lng }} };
+        {% endif %}
+
+        var mapOptions = {
+            zoom: 12,
+            center: initialLocation,
+            mapTypeId: 'roadmap',
+            tilt: 45, // Iniciar con inclinación para mejor visualización 3D
+            heading: 75, // Iniciar con una orientación específica
+            mapId: 'f97da37b6ed018ec', // Reemplaza con tu propio mapId de Google Cloud
+            disableDefaultUI: true,
+            gestureHandling: 'none',
+            keyboardShortcuts: false
+        };
+
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+        // Datos de los anuncios
+        var anuncios = {{ anuncios|safe }};
+
+        anuncios.forEach(function(anuncio) {
+            if (anuncio.latitud && anuncio.longitud && anuncio.modelo_3d_url) {
+                var marker = new google.maps.Marker({
+                    position: { lat: anuncio.latitud, lng: anuncio.longitud },
+                    map: map,
+                    title: anuncio.titulo,
+                    icon: {
+                        url: anuncio.imagen_url, // Imagen del marcador
+                        scaledSize: new google.maps.Size(50, 50)
+                    }
+                });
+
+                marker.addListener('click', function() {
+                    onMarkerClick(anuncio);
+                });
+            }
+        });
+    }
+
+    // Función para manejar clics en marcadores
+    function onMarkerClick(anuncio) {
+        document.getElementById('detailedMapModalLabel').innerText = anuncio.titulo;
+        initDetailedMap(anuncio);
+        var detailedMapModal = new bootstrap.Modal(document.getElementById('detailedMapModal'), { keyboard: false });
+        detailedMapModal.show();
+    }
+
+    // Inicializar el mapa 3D detallado dentro del Modal
+    function initDetailedMap(anuncio) {
+        if (window.detailedMap) {
+            window.detailedMap = null;
+            document.getElementById('detailed-map').innerHTML = '';
+        }
+
+        var location = { lat: parseFloat(anuncio.latitud), lng: parseFloat(anuncio.longitud) };
+
+        window.detailedMap = new google.maps.Map(document.getElementById('detailed-map'), {
+            zoom: 18,
+            center: location,
+            mapTypeId: 'roadmap',
+            tilt: 75,
+            heading: 330,
+            mapId: 'f97da37b6ed018ec' // Usar el mismo mapId que para el mapa principal
+        });
+
+        // Usar WebGLOverlayView para cargar el modelo 3D
+        var webglOverlayView = new google.maps.WebGLOverlayView();
+        webglOverlayView.onAdd = () => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera();
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            scene.add(ambientLight);
+
+            // Cargar el modelo 3D con GLTFLoader
+            const loader = new GLTFLoader();
+            loader.load("{{ MEDIA_URL }}" + anuncio.modelo_3d_url, function(gltf) {
+                gltf.scene.scale.set(10, 10, 10);
+                gltf.scene.rotation.x = Math.PI; // Asegúrate de ajustar la rotación correctamente
+                scene.add(gltf.scene);
+            });
+
+        };
+
+        webglOverlayView.onContextRestored = ({ gl }) => {
+            const renderer = new THREE.WebGLRenderer({
+                canvas: gl.canvas,
+                context: gl,
+                ...gl.getContextAttributes(),
+            });
+            renderer.autoClear = false;
+        };
+
+        webglOverlayView.onDraw = ({ gl, transformer }) => {
+            const matrix = transformer.fromLatLngAltitude({
+                lat: location.lat,
+                lng: location.lng,
+                altitude: 0,
+            });
+            camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
+            renderer.render(scene, camera);
+            renderer.resetState();
+        };
+
+        webglOverlayView.setMap(window.detailedMap);
+    }
+
+    window.onload = initMainMap;
+</script>
+{% endblock %}

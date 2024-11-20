@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'login',
     'registor',
     'administrador',
+    'anuncio',
+    'mapas',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +133,8 @@ LOGOUT_REDIRECT_URL = 'login:login'  # Redirige a la página de login después d
 LOGIN_URL = 'login:login'  # URL de inicio de sesión por defecto
 
 AUTH_USER_MODEL = 'core.Anunciate'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+GOOGLE_MAPS_API_KEY = 'AIzaSyDUdzILrg2M-lfeaFAeYKFS4GfITIBKRZY&libraries=places&v'
